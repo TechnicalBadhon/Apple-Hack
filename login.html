@@ -209,7 +209,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK (same config inline) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
@@ -228,19 +227,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Network background animation (same as above)
+            // Network BG (same code)
             const canvas = document.getElementById('network-bg');
             const ctx = canvas.getContext('2d');
             let nodes = [];
             const nodeCount = 100;
             const connectionDistance = 150;
-            
-            const resizeCanvas = () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            };
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+            const resizeCanvas = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+            resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 
             class Node {
                 constructor() {
@@ -266,32 +260,30 @@
 
             const initNodes = () => {
                 nodes = [];
-                for (let i = 0; i < nodeCount; i++) {
-                    nodes.push(new Node());
-                }
+                for (let i = 0; i < nodeCount; i++) nodes.push(new Node());
             };
             initNodes();
 
             const animate = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                nodes.forEach(node => node.update());
+                nodes.forEach(n => n.update());
                 for (let i = 0; i < nodes.length; i++) {
                     for (let j = i + 1; j < nodes.length; j++) {
                         const dx = nodes[i].x - nodes[j].x;
                         const dy = nodes[i].y - nodes[j].y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        if (distance < connectionDistance) {
+                        const d = Math.sqrt(dx*dx + dy*dy);
+                        if (d < connectionDistance) {
                             ctx.beginPath();
                             ctx.moveTo(nodes[i].x, nodes[i].y);
                             ctx.lineTo(nodes[j].x, nodes[j].y);
-                            const opacity = 1 - (distance / connectionDistance);
-                            ctx.strokeStyle = `rgba(255, 0, 64, ${opacity * 0.5})`;
+                            const o = 1 - (d / connectionDistance);
+                            ctx.strokeStyle = `rgba(255, 0, 64, ${o * 0.5})`;
                             ctx.lineWidth = 0.5;
                             ctx.stroke();
                         }
                     }
                 }
-                nodes.forEach(node => node.draw());
+                nodes.forEach(n => n.draw());
                 requestAnimationFrame(animate);
             };
             animate();
@@ -303,35 +295,27 @@
             const errorMessage = document.getElementById('errorMessage');
             const loadingText = document.getElementById('loadingText');
 
-            loginForm.addEventListener('submit', (e) => {
+            loginForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const gameId = gameIdInput.value.trim();
+                if (gameId.length < 9) return showError("ACCESS DENIED: ID MUST BE AT LEAST 9 CHARACTERS");
 
                 errorMessage.style.display = 'none';
                 loadingText.style.display = 'block';
                 loginBtn.disabled = true;
 
-                if (gameId.length < 9) {
-                    showError("ACCESS DENIED: ID MUST BE AT LEAST 9 CHARACTERS");
-                    return;
-                }
-
-                const usersRef = firebase.database().ref('UsersData_dev420');
-                usersRef.once('value')
+                firebase.database().ref('UsersData_dev420').once('value')
                     .then(snapshot => {
-                        let userFound = false;
-                        snapshot.forEach(childSnapshot => {
-                            if (childSnapshot.val().GameID === gameId) {
-                                userFound = true;
-                            }
+                        let found = false;
+                        snapshot.forEach(child => {
+                            if (child.val().GameID === gameId) found = true;
                         });
-
                         localStorage.setItem('gameId', gameId);
-                        localStorage.setItem('isLoggedIn', userFound ? 'true' : 'false');
+                        localStorage.setItem('isLoggedIn', found ? 'true' : 'false');
                         window.location.href = 'index.html';
                     })
-                    .catch(error => {
-                        console.error("Database Error:", error);
+                    .catch(err => {
+                        console.error(err);
                         showError("DATABASE ERROR: CONNECTION FAILED");
                     })
                     .finally(() => {
@@ -340,8 +324,8 @@
                     });
             });
 
-            function showError(message) {
-                errorMessage.textContent = message;
+            function showError(msg) {
+                errorMessage.textContent = msg;
                 errorMessage.style.display = 'block';
                 loadingText.style.display = 'none';
                 loginBtn.disabled = false;
