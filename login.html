@@ -15,6 +15,7 @@
             --text-primary: #e6e6e6;
             --text-secondary: #a0a0a0;
             --error-color: #ff4757;
+            --success-color: #00ff9d;
         }
 
         * {
@@ -126,6 +127,54 @@
             background: rgba(255, 255, 255, 0.08);
         }
 
+        /* Platform Selection */
+        .platform-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .platform-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .platform-option {
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+
+        .platform-btn {
+            width: 100%;
+            padding: 12px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .platform-btn.selected {
+            background: var(--secondary-color);
+            color: var(--bg-dark);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .platform-btn.selected::after {
+            content: "✓";
+            position: absolute;
+            top: 4px;
+            right: 8px;
+            color: var(--bg-dark);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
         .login-btn {
             width: 100%;
             height: 50px;
@@ -193,9 +242,21 @@
     <div class="main-container">
         <div class="login-container">
             <h1 class="title">BLACK DOG APPLE</h1>
-            <p class="subtitle">ENTER GAME ID TO ACCESS THE SYSTEM</p>
+            <p class="subtitle">SELECT PLATFORM & ENTER GAME ID</p>
             
             <form id="loginForm">
+                <div class="platform-group">
+                    <label>SELECT PLATFORM:</label>
+                    <div class="platform-options">
+                        <div class="platform-option">
+                            <button type="button" class="platform-btn" data-platform="1xbet">1xBet</button>
+                        </div>
+                        <div class="platform-option">
+                            <button type="button" class="platform-btn" data-platform="melbet">Melbet</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="input-group">
                     <label for="gameId">GAME_ID:</label>
                     <input type="text" id="gameId" name="gameId" placeholder="Enter your player uid" required minlength="9">
@@ -227,7 +288,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Network BG (same code)
+            // Network BG
             const canvas = document.getElementById('network-bg');
             const ctx = canvas.getContext('2d');
             let nodes = [];
@@ -288,6 +349,17 @@
             };
             animate();
 
+            // Platform selection logic
+            let selectedPlatform = null;
+            const platformButtons = document.querySelectorAll('.platform-btn');
+            platformButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    platformButtons.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedPlatform = btn.dataset.platform;
+                });
+            });
+
             // Login logic
             const loginForm = document.getElementById('loginForm');
             const gameIdInput = document.getElementById('gameId');
@@ -297,12 +369,22 @@
 
             loginForm.addEventListener('submit', e => {
                 e.preventDefault();
+
+                if (!selectedPlatform) {
+                    return showError("SELECT A PLATFORM FIRST");
+                }
+
                 const gameId = gameIdInput.value.trim();
-                if (gameId.length < 9) return showError("ACCESS DENIED: ID MUST BE AT LEAST 9 CHARACTERS");
+                if (gameId.length < 9) {
+                    return showError("ACCESS DENIED: ID MUST BE AT LEAST 9 CHARACTERS");
+                }
 
                 errorMessage.style.display = 'none';
                 loadingText.style.display = 'block';
                 loginBtn.disabled = true;
+
+                // Save platform to localStorage
+                localStorage.setItem('selectedPlatform', selectedPlatform);
 
                 firebase.database().ref('UsersData_dev420').once('value')
                     .then(snapshot => {
