@@ -54,6 +54,29 @@
             width: 100%;
         }
 
+        /* Platform Logo */
+        .platform-logo {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .circular-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--secondary-color);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+
         .game-container {
             background: var(--card-bg);
             border: 1px solid rgba(0, 255, 136, 0.2);
@@ -176,6 +199,7 @@
             .multiplier { font-size: 14px; width: 70px; }
             .image-wrapper { width: 50px; height: 50px; }
             .display-game-id { font-size: 1.2rem; }
+            .circular-logo { width: 70px; height: 70px; }
         }
     </style>
 </head>
@@ -183,6 +207,11 @@
     <canvas id="network-bg"></canvas>
 
     <div class="main-container">
+        <!-- Platform Logo Image -->
+        <div class="platform-logo">
+            <img src="https://i.ibb.co/7fQtk26/IMG-20251101-012356-988.jpg" alt="Platform Logo" class="circular-logo">
+        </div>
+
         <div class="game-container">
             <div class="game-row" id="row10"><div class="multiplier">x 349.68</div><div class="images-container"><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img46"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img47"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img48"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img49"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img50"></div></div></div>
             <div class="game-row" id="row9"><div class="multiplier">x 69.93</div><div class="images-container"><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img41"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img42"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img43"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img44"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img45"></div></div></div>
@@ -204,9 +233,11 @@
         <button class="control-btn" id="nextBtn">Next<i class="material-icons">arrow_forward</i></button>
     </div>
 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
+        // Firebase config (cleaned: removed extra spaces)
         const firebaseConfig = {
           apiKey: "AIzaSyCPX39jxbL-mi6Lo4LmtPXMWn9dq1khX1w",
           authDomain: "codify09.firebaseapp.com",
@@ -222,7 +253,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Network BG Animation (same as before)
+            // Network Background
             const canvas = document.getElementById('network-bg');
             const ctx = canvas.getContext('2d');
             let nodes = [];
@@ -289,7 +320,7 @@
             };
             animate();
 
-            // Game Logic
+            // Game Navigation
             const displayGameId = document.getElementById('displayGameId');
             const backBtn = document.getElementById('backBtn');
             const startBtn = document.getElementById('startBtn');
@@ -301,12 +332,16 @@
                 gameRows.forEach(row => row.classList.remove('active'));
                 gameRows[index].classList.add('active');
             };
+
             backBtn.addEventListener('click', () => { if (currentRow > 0) showRow(--currentRow); });
             nextBtn.addEventListener('click', () => { if (currentRow < gameRows.length - 1) showRow(++currentRow); });
             startBtn.addEventListener('click', () => { currentRow = 0; showRow(currentRow); });
 
+            // Auth & Data Load
             const gameId = localStorage.getItem('gameId');
-            if (!gameId) return window.location.href = 'login.html';
+            if (!gameId) {
+                return window.location.href = 'login.html';
+            }
 
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             displayGameId.textContent = `ID: ${gameId}`;
