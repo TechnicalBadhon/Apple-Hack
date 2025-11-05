@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --secondary-color: #00d4ff;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(13, 17, 23, 0.7);
+            --text-primary: #e6e6e6;
+            --text-secondary: #a0a0a0;
+            --error-color: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .login-container {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.2s ease-out;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--primary-color);
+            animation: glitch-text 3s infinite;
+        }
+
+        @keyframes glitch-text {
+            0%, 100% { text-shadow: 0 0 10px var(--primary-color); }
+            25% { text-shadow: -2px 0 var(--secondary-color), 2px 0 var(--error-color); }
+            50% { text-shadow: 2px 0 var(--secondary-color), -2px 0 var(--error-color); }
+            75% { text-shadow: 0 0 10px var(--primary-color); }
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 50px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .login-btn:disabled {
+            background: #333;
+            border-color: #555;
+            color: #777;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            display: none;
+        }
+
+        .loading-text::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="network-bg"></canvas>
+
+    <div class="main-container">
+        <div class="login-container">
+            <h1 class="title">INITIALIZE</h1>
+            <p class="subtitle">ENTER GAME ID TO ACCESS THE SYSTEM</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="gameId">GAME_ID:</label>
+                    <input type="text" id="gameId" name="gameId" placeholder="e.g., PLAYER12345" required minlength="9">
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">EXECUTE</button>
+                
+                <div class="error-message" id="errorMessage">ACCESS DENIED: INVALID ID</div>
+                <div class="loading-text" id="loadingText">AUTHENTICATING</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (same config inline) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyCPX39jxbL-mi6Lo4LmtPXMWn9dq1khX1w",
+          authDomain: "codify09.firebaseapp.com",
+          databaseURL: "https://codify09-default-rtdb.firebaseio.com",
+          projectId: "codify09",
+          storageBucket: "codify09.firebasestorage.app",
+          messagingSenderId: "457920758628",
+          appId: "1:457920758628:web:5f7ffed17caaf6f90cb071",
+          measurementId: "G-LG9RP4RV1E"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Network background animation (same as above)
+            const canvas = document.getElementById('network-bg');
+            const ctx = canvas.getContext('2d');
+            let nodes = [];
+            const nodeCount = 100;
+            const connectionDistance = 150;
+            
+            const resizeCanvas = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Node {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = 2;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                    if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 0, 64, 0.8)';
+                    ctx.fill();
+                }
+            }
+
+            const initNodes = () => {
+                nodes = [];
+                for (let i = 0; i < nodeCount; i++) {
+                    nodes.push(new Node());
+                }
+            };
+            initNodes();
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                nodes.forEach(node => node.update());
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < connectionDistance) {
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            const opacity = 1 - (distance / connectionDistance);
+                            ctx.strokeStyle = `rgba(255, 0, 64, ${opacity * 0.5})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                nodes.forEach(node => node.draw());
+                requestAnimationFrame(animate);
+            };
+            animate();
+
+            // Login logic
+            const loginForm = document.getElementById('loginForm');
+            const gameIdInput = document.getElementById('gameId');
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const loadingText = document.getElementById('loadingText');
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const gameId = gameIdInput.value.trim();
+
+                errorMessage.style.display = 'none';
+                loadingText.style.display = 'block';
+                loginBtn.disabled = true;
+
+                if (gameId.length < 9) {
+                    showError("ACCESS DENIED: ID MUST BE AT LEAST 9 CHARACTERS");
+                    return;
+                }
+
+                const usersRef = firebase.database().ref('UsersData_dev420');
+                usersRef.once('value')
+                    .then(snapshot => {
+                        let userFound = false;
+                        snapshot.forEach(childSnapshot => {
+                            if (childSnapshot.val().GameID === gameId) {
+                                userFound = true;
+                            }
+                        });
+
+                        localStorage.setItem('gameId', gameId);
+                        localStorage.setItem('isLoggedIn', userFound ? 'true' : 'false');
+                        window.location.href = 'index.html';
+                    })
+                    .catch(error => {
+                        console.error("Database Error:", error);
+                        showError("DATABASE ERROR: CONNECTION FAILED");
+                    })
+                    .finally(() => {
+                        loadingText.style.display = 'none';
+                        loginBtn.disabled = false;
+                    });
+            });
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                loadingText.style.display = 'none';
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
