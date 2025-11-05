@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Access Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --secondary-color: #00d4ff;
+            --bg-dark: #0a0a0a;
+            --card-bg: #ffffff;
+            --text-primary: #e6e6e6;
+            --text-secondary: #a0a0a0;
+            --error-color: #ff4757;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
+            padding: 5px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .game-row {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .game-row.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .multiplier {
+            width: 60px;
+            text-align: right;
+            font-size: 10px;
+            font-weight: bold;
+            color: #0a0a0a;
+            margin-right: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .images-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-wrapper {
+            width: 45px;
+            height: 45px;
+            margin: 0 2.2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .game-image:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2) drop-shadow(0 0 5px var(--primary-color));
+        }
+
+        .display-game-id {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 15px;
+            text-align: center;
+            animation: slideUp 1.4s ease-out;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            gap: 15px;
+            animation: slideUp 1.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .control-btn {
+            flex: 1;
+            height: 50px;
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            color: var(--primary-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (min-width: 768px) {
+            .main-container {
+                padding: 40px;
+            }
+            .game-container {
+                max-width: 600px;
+                padding: 20px;
+            }
+            .controls {
+                max-width: 600px;
+                padding: 20px 40px;
+            }
+            .multiplier {
+                font-size: 14px;
+                width: 70px;
+            }
+            .image-wrapper {
+                width: 50px;
+                height: 50px;
+            }
+            .display-game-id {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="network-bg"></canvas>
+
+    <div class="main-container">
+        <div class="game-container">
+            <div class="game-row" id="row10"><div class="multiplier">x 349.68</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img46"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img47"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img48"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img49"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img50"></div></div></div>
+            <div class="game-row" id="row9"><div class="multiplier">x 69.93</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img41"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img42"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img43"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img44"></div><div class="image-wrapper"><img src="assets/apple3.png" alt="Apple" class="game-image" id="img45"></div></div></div>
+            <div class="game-row" id="row8"><div class="multiplier">x 27.92</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img36"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img37"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img38"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img39"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img40"></div></div></div>
+            <div class="game-row" id="row7"><div class="multiplier">x 11.18</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img31"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img32"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img33"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img34"></div><div class="image-wrapper"><img src="assets/apple2.png" alt="Apple" class="game-image" id="img35"></div></div></div>
+            <div class="game-row" id="row6"><div class="multiplier">x 6.71</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img26"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img27"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img28"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img29"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img30"></div></div></div>
+            <div class="game-row" id="row5"><div class="multiplier">x 4.02</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img21"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img22"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img23"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img24"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img25"></div></div></div>
+            <div class="game-row" id="row4"><div class="multiplier">x 2.41</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img16"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img17"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img18"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img19"></div><div class="image-wrapper"><img src="assets/apple1.png" alt="Apple" class="game-image" id="img20"></div></div></div>
+            <div class="game-row" id="row3"><div class="multiplier">x 1.93</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img11"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img12"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img13"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img14"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img15"></div></div></div>
+            <div class="game-row" id="row2"><div class="multiplier">x 1.54</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img6"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img7"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img8"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img9"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img10"></div></div></div>
+            <div class="game-row" id="row1"><div class="multiplier">x 1.23</div><div class="images-container"><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img1"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img2"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img3"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img4"></div><div class="image-wrapper"><img src="assets/apple1xbet.png" alt="Apple" class="game-image" id="img5"></div></div></div>
+        </div>
+        <div class="display-game-id" id="displayGameId">ID: ...</div>
+    </div>
+    
+    <div class="controls">
+        <button class="control-btn" id="backBtn"><i class="material-icons">arrow_back</i>Back</button>
+        <button class="control-btn" id="startBtn"><i class="material-icons">play_arrow</i>Start</button>
+        <button class="control-btn" id="nextBtn">Next<i class="material-icons">arrow_forward</i></button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCPX39jxbL-mi6Lo4LmtPXMWn9dq1khX1w",
+          authDomain: "codify09.firebaseapp.com",
+          databaseURL: "https://codify09-default-rtdb.firebaseio.com",
+          projectId: "codify09",
+          storageBucket: "codify09.firebasestorage.app",
+          messagingSenderId: "457920758628",
+          appId: "1:457920758628:web:5f7ffed17caaf6f90cb071",
+          measurementId: "G-LG9RP4RV1E"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Network Background Animation ---
+            const canvas = document.getElementById('network-bg');
+            const ctx = canvas.getContext('2d');
+            
+            let nodes = [];
+            const nodeCount = 100;
+            const connectionDistance = 150;
+            
+            const resizeCanvas = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            };
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Node {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = 2;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                    if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 0, 64, 0.8)';
+                    ctx.fill();
+                }
+            }
+
+            const initNodes = () => {
+                nodes = [];
+                for (let i = 0; i < nodeCount; i++) {
+                    nodes.push(new Node());
+                }
+            };
+            initNodes();
+
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                nodes.forEach(node => {
+                    node.update();
+                });
+
+                for (let i = 0; i < nodes.length; i++) {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance < connectionDistance) {
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            const opacity = 1 - (distance / connectionDistance);
+                            ctx.strokeStyle = `rgba(255, 0, 64, ${opacity * 0.5})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                nodes.forEach(node => {
+                    node.draw();
+                });
+
+                requestAnimationFrame(animate);
+            };
+            animate();
+
+            // --- Game Logic ---
+            const displayGameId = document.getElementById('displayGameId');
+            const backBtn = document.getElementById('backBtn');
+            const startBtn = document.getElementById('startBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const gameRows = Array.from({length: 10}, (_, i) => document.getElementById(`row${i + 1}`));
+            let currentRow = 0;
+
+            const showRow = (index) => {
+                gameRows.forEach(row => row.classList.remove('active'));
+                gameRows[index].classList.add('active');
+            };
+            backBtn.addEventListener('click', () => { if (currentRow > 0) showRow(--currentRow); });
+            nextBtn.addEventListener('click', () => { if (currentRow < gameRows.length - 1) showRow(++currentRow); });
+            startBtn.addEventListener('click', () => { currentRow = 0; showRow(currentRow); });
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const gameId = localStorage.getItem('gameId');
+
+            if (!gameId) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (isLoggedIn) {
+                const usersRef = firebase.database().ref('UsersData_dev420');
+                usersRef.once('value').then(snapshot => {
+                    let userFound = false;
+                    let userUid = null;
+
+                    snapshot.forEach(childSnapshot => {
+                        if (childSnapshot.val().GameID === gameId) {
+                            userFound = true;
+                            userUid = childSnapshot.key;
+                        }
+                    });
+
+                    if (userFound && userUid) {
+                        displayGameId.textContent = `ID: ${gameId}`;
+                        loadRealGameData(userUid);
+                    } else {
+                        setupGuestView();
+                    }
+                }).catch(err => {
+                    console.error("Error fetching user:", err);
+                    setupGuestView();
+                });
+            } else {
+                setupGuestView();
+            }
+
+            function setupGuestView() {
+                displayGameId.textContent = `ID: ${gameId}`;
+                loadRandomData();
+            }
+            
+            function loadRealGameData(userUid) {
+                const appleRef = firebase.database().ref('apple').child(userUid);
+                appleRef.once('value').then(snapshot => {
+                    const data = snapshot.val() || {};
+                    for (let i = 1; i <= 50; i++) {
+                        const imgElement = document.getElementById(`img${i}`);
+                        const status = data[`img${i}`]?.Status;
+                        if (status === 'Apple') {
+                            imgElement.src = 'assets/appleof.png';
+                        } else if (status === 'Not Apple') {
+                            imgElement.src = 'assets/not_apple.png';
+                        }
+                    }
+                    showRow(currentRow);
+                });
+            }
+
+            function loadRandomData() {
+                for (let i = 1; i <= 50; i++) {
+                    const imgElement = document.getElementById(`img${i}`);
+                    const isApple = Math.random() > 0.5;
+                    imgElement.src = isApple ? 'assets/appleof.png' : 'assets/not_apple.png';
+                }
+                showRow(currentRow);
+            }
+        });
+    </script>
+</body>
+</html>
