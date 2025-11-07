@@ -31,10 +31,7 @@
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
-            /* Removed z-index and position:relative from body */
         }
-
-        /* Removed the #network-bg canvas and its associated styles */
 
         .main-container {
             flex: 1;
@@ -46,39 +43,36 @@
             width: 100%;
         }
 
-        /* Platform Logo */
-        .platform-logo {
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            align-items: center;
+        /* Title Text */
+        .platform-title {
+            margin-bottom: 30px;
+            text-align: center;
         }
 
-        .circular-logo {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary-color);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-            animation: pulse 2s infinite;
-            margin-bottom: 10px;
-        }
-
-        .platform-name {
+        .title-text {
             font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            color: var(--primary-color);
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-            letter-spacing: 1px;
-            margin-top: 5px;
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: transparent;
+            background: linear-gradient(45deg, #00d4ff, #009cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            position: relative;
+            padding: 0 10px;
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        .title-text::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            border-radius: 2px;
         }
 
         .game-container {
@@ -225,19 +219,16 @@
             .multiplier { font-size: 18px; width: 90px; }
             .image-wrapper { width: 60px; height: 60px; }
             .display-game-id { font-size: 20px; }
-            .circular-logo { width: 80px; height: 80px; }
-            .platform-name { font-size: 28px; }
+            .title-text { font-size: 3.2rem; }
         }
     </style>
 </head>
 <body>
-    <!-- REMOVED: <canvas id="network-bg"></canvas> -->
 
     <div class="main-container">
-        <!-- Platform Logo & Name -->
-        <div class="platform-logo">
-            <img src="https://i.ibb.co.com/Z1p11BP0/black.png" alt="LDX404 Logo" class="circular-logo">
-            <div class="platform-name">LDX404</div>
+        <!-- Platform Title Text -->
+        <div class="platform-title">
+            <h1 class="title-text">LDX404</h1>
         </div>
 
         <div class="game-container">
@@ -281,8 +272,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // REMOVED: Network Background Animation Code
-
             // Game Navigation
             const displayGameId = document.getElementById('displayGameId');
             const backBtn = document.getElementById('backBtn');
