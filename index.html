@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LDX404 - System Access Dashboard</title>
+    <title>Dashboard - LDX404</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #00d4ff;
-            --secondary-color: #ff4757;
-            --bg-dark: #0a0a0a;
-            --card-bg: #121212;
-            --text-primary: #e6e6e6;
-            --text-secondary: #a0a0a0;
-            --error-color: #ff4757;
+            --primary-color: #007bff; /* Standard Blue */
+            --secondary-color: #6c757d; /* Standard Grey */
+            --bg-dark: #1a1a1a; /* Dark Grey */
+            --card-bg: #2d2d2d; /* Slightly Lighter Grey */
+            --text-primary: #f0f0f0; /* Light Text */
+            --text-secondary: #adb5bd; /* Muted Text */
+            --error-color: #dc3545; /* Standard Red */
+            --success-color: #28a745; /* Standard Green */
         }
 
         * {
@@ -31,75 +32,49 @@
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
+            padding: 20px;
         }
 
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            width: 100%;
-        }
-
-        /* Title Text */
-        .platform-title {
-            margin-bottom: 30px;
+        .header {
             text-align: center;
+            margin-bottom: 20px;
         }
 
-        .title-text {
+        .title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: transparent;
-            background: linear-gradient(45deg, #00d4ff, #009cff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
-            position: relative;
-            padding: 0 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
 
-        .title-text::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            border-radius: 2px;
+        .display-game-id {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
         }
 
         .game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             background: var(--card-bg);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 18px;
+            border: 1px solid var(--primary-color);
+            border-radius: 10px;
             padding: 20px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            animation: fadeIn 1.2s ease-out;
-            margin-bottom: 30px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
         .game-row {
-            display: none;
+            display: none; /* Initially hidden */
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
         }
 
         .game-row.active {
@@ -110,170 +85,134 @@
         .multiplier {
             width: 80px;
             text-align: right;
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: bold;
-            color: var(--primary-color);
-            margin-right: 15px;
+            color: var(--text-primary);
+            margin-right: 10px;
             font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
         }
 
         .images-container {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 5px; /* Space between images */
         }
 
         .image-wrapper {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
         }
 
         .game-image {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            transition: transform 0.3s, filter 0.3s;
-        }
-
-        .image-wrapper:hover .game-image {
-            transform: scale(1.15);
-            filter: brightness(1.3) drop-shadow(0 0 8px var(--primary-color));
-        }
-
-        .image-wrapper:hover {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-
-        .display-game-id {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin-top: 15px;
-            text-align: center;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
-            animation: slideUp 1.4s ease-out;
         }
 
         .controls {
             display: flex;
             justify-content: center;
             width: 100%;
-            max-width: 600px;
-            padding: 20px;
+            max-width: 500px;
+            padding: 10px;
             gap: 15px;
-            animation: slideUp 1.4s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            margin-top: auto; /* Push to bottom */
         }
 
         .control-btn {
             flex: 1;
-            height: 55px;
-            background: transparent;
-            border: 1px solid var(--primary-color);
-            border-radius: 12px;
-            color: var(--primary-color);
+            height: 45px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            color: white;
             font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s, transform 0.2s;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+            gap: 5px;
         }
 
         .control-btn:hover {
-            background: var(--primary-color);
-            color: var(--bg-dark);
-            box-shadow: 0 0 25px var(--primary-color);
-            transform: translateY(-3px);
+            background: #0056b3; /* Darker Blue */
         }
 
         .control-btn:active {
-            transform: translateY(0);
+             transform: translateY(1px);
         }
 
+        /* Responsive Design */
         @media (min-width: 768px) {
-            .main-container { padding: 40px; }
-            .game-container { padding: 30px; }
-            .controls { padding: 20px 40px; }
-            .multiplier { font-size: 18px; width: 90px; }
-            .image-wrapper { width: 60px; height: 60px; }
-            .display-game-id { font-size: 20px; }
-            .title-text { font-size: 3.2rem; }
+            .game-container {
+                padding: 30px;
+            }
+            .multiplier {
+                font-size: 1.2rem;
+                width: 100px;
+            }
+            .image-wrapper {
+                width: 60px;
+                height: 60px;
+            }
+            .display-game-id {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <div class="main-container">
-        <!-- Platform Title Text -->
-        <div class="platform-title">
-            <h1 class="title-text">LDX404</h1>
-        </div>
-
-        <div class="game-container">
-            <div class="game-row" id="row10"><div class="multiplier">x 349.68</div><div class="images-container"><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img46"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img47"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img48"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img49"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img50"></div></div></div>
-            <div class="game-row" id="row9"><div class="multiplier">x 69.93</div><div class="images-container"><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img41"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img42"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img43"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img44"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img45"></div></div></div>
-            <div class="game-row" id="row8"><div class="multiplier">x 27.92</div><div class="images-container"><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img36"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img37"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img38"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img39"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img40"></div></div></div>
-            <div class="game-row" id="row7"><div class="multiplier">x 11.18</div><div class="images-container"><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img31"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img32"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img33"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img34"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img35"></div></div></div>
-            <div class="game-row" id="row6"><div class="multiplier">x 6.71</div><div class="images-container"><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img26"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img27"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img28"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img29"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img30"></div></div></div>
-            <div class="game-row" id="row5"><div class="multiplier">x 4.02</div><div class="images-container"><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img21"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img22"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img23"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img24"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img25"></div></div></div>
-            <div class="game-row" id="row4"><div class="multiplier">x 2.41</div><div class="images-container"><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img16"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img17"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img18"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img19"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img20"></div></div></div>
-            <div class="game-row" id="row3"><div class="multiplier">x 1.93</div><div class="images-container"><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img11"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img12"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img13"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img14"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img15"></div></div></div>
-            <div class="game-row" id="row2"><div class="multiplier">x 1.54</div><div class="images-container"><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img6"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img7"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img8"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img9"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img10"></div></div></div>
-            <div class="game-row" id="row1"><div class="multiplier">x 1.23</div><div class="images-container"><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img1"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img2"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img3"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img4"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img5"></div></div></div>
-        </div>
+    <div class="header">
+        <h1 class="title">LDX404</h1>
         <div class="display-game-id" id="displayGameId">ID: ...</div>
     </div>
-    
-    <div class="controls">
-        <button class="control-btn" id="backBtn"><i class="material-icons">arrow_back</i>Back</button>
-        <button class="control-btn" id="startBtn"><i class="material-icons">play_arrow</i>Start</button>
-        <button class="control-btn" id="nextBtn">Next<i class="material-icons">arrow_forward</i></button>
+
+    <div class="game-container">
+        <!-- All 10 rows are here, but will be controlled by JS -->
+        <!-- Row 10 -->
+        <div class="game-row" id="row10"><div class="multiplier">x 349.68</div><div class="images-container"><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img46"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img47"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img48"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img49"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img50"></div></div></div>
+        <!-- Row 9 -->
+        <div class="game-row" id="row9"><div class="multiplier">x 69.93</div><div class="images-container"><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img41"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img42"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img43"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img44"></div><div class="image-wrapper"><img src="apple3.png" alt="Apple" class="game-image" id="img45"></div></div></div>
+        <!-- Row 8 -->
+        <div class="game-row" id="row8"><div class="multiplier">x 27.92</div><div class="images-container"><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img36"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img37"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img38"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img39"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img40"></div></div></div>
+        <!-- Row 7 -->
+        <div class="game-row" id="row7"><div class="multiplier">x 11.18</div><div class="images-container"><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img31"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img32"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img33"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img34"></div><div class="image-wrapper"><img src="apple2.png" alt="Apple" class="game-image" id="img35"></div></div></div>
+        <!-- Row 6 -->
+        <div class="game-row" id="row6"><div class="multiplier">x 6.71</div><div class="images-container"><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img26"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img27"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img28"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img29"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img30"></div></div></div>
+        <!-- Row 5 -->
+        <div class="game-row" id="row5"><div class="multiplier">x 4.02</div><div class="images-container"><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img21"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img22"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img23"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img24"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img25"></div></div></div>
+        <!-- Row 4 -->
+        <div class="game-row" id="row4"><div class="multiplier">x 2.41</div><div class="images-container"><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img16"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img17"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img18"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img19"></div><div class="image-wrapper"><img src="apple1.png" alt="Apple" class="game-image" id="img20"></div></div></div>
+        <!-- Row 3 -->
+        <div class="game-row" id="row3"><div class="multiplier">x 1.93</div><div class="images-container"><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img11"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img12"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img13"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img14"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img15"></div></div></div>
+        <!-- Row 2 -->
+        <div class="game-row" id="row2"><div class="multiplier">x 1.54</div><div class="images-container"><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img6"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img7"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img8"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img9"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img10"></div></div></div>
+        <!-- Row 1 -->
+        <div class="game-row" id="row1"><div class="multiplier">x 1.23</div><div class="images-container"><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img1"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img2"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img3"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img4"></div><div class="image-wrapper"><img src="apple1xbet.png" alt="Apple" class="game-image" id="img5"></div></div></div>
     </div>
 
-    <!-- Firebase SDK is now only needed for the game data load if it's also broken -->
-    <!-- If game data load also fails, remove the SDK and loadRandomData() fallback will be used -->
+    <div class="controls">
+        <button class="control-btn" id="backBtn"><i class="material-icons">arrow_back</i> Back</button>
+        <button class="control-btn" id="startBtn"><i class="material-icons">play_arrow</i> Start</button>
+        <button class="control-btn" id="nextBtn">Next <i class="material-icons">arrow_forward</i></button>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script>
-        // Firebase config (cleaned: removed extra spaces)
-        const firebaseConfig = {
-          apiKey: "AIzaSyCPX39jxbL-mi6Lo4LmtPXMWn9dq1khX1w",
-          authDomain: "codify09.firebaseapp.com",
-          databaseURL: "https://codify09-default-rtdb.firebaseio.com",
-          projectId: "codify09",
-          storageBucket: "codify09.firebasestorage.app",
-          messagingSenderId: "457920758628",
-          appId: "1:457920758628:web:5f7ffed17caaf6f90cb071",
-          measurementId: "G-LG9RP4RV1E"
-        };
-        firebase.initializeApp(firebaseConfig);
-    </script>
+    <script src="firebase-config.js"></script> <!-- Include the config file -->
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Game Navigation
             const displayGameId = document.getElementById('displayGameId');
             const backBtn = document.getElementById('backBtn');
             const startBtn = document.getElementById('startBtn');
@@ -290,56 +229,84 @@
             nextBtn.addEventListener('click', () => { if (currentRow < gameRows.length - 1) showRow(++currentRow); });
             startBtn.addEventListener('click', () => { currentRow = 0; showRow(currentRow); });
 
-            // Auth & Data Load
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
             const gameId = localStorage.getItem('gameId');
+
             if (!gameId) {
-                // Redirect to login if no game ID is found in localStorage
-                return window.location.href = 'login.html';
+                window.location.href = 'login.html';
+                return;
             }
 
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            displayGameId.textContent = `ID: ${gameId}`;
-
             if (isLoggedIn) {
-                // This part might also fail if the UsersData_dev420 path is invalid
-                firebase.database().ref('UsersData_dev420').once('value').then(snapshot => {
+                displayGameId.textContent = `ID: ${gameId}`; // Show the stored ID
+                // Fetch real data based on the logged-in user's ID
+                const usersRef = firebase.database().ref('UsersData_dev420');
+                usersRef.once('value').then(snapshot => {
+                    let userFound = false;
                     let userUid = null;
-                    snapshot.forEach(child => {
-                        if (child.val().GameID === gameId) userUid = child.key;
+
+                    snapshot.forEach(childSnapshot => {
+                        if (childSnapshot.val().GameID === gameId) {
+                            userFound = true;
+                            userUid = childSnapshot.key;
+                        }
                     });
-                    if (userUid) loadRealGameData(userUid);
-                    else loadRandomData();
-                }).catch(() => {
-                    // If the user lookup fails, load random data
-                    loadRandomData();
+
+                    if (userFound && userUid) {
+                        loadRealGameData(userUid);
+                    } else {
+                        setupGuestView();
+                    }
+                }).catch(err => {
+                    console.error("Error fetching user:", err);
+                    setupGuestView();
                 });
             } else {
+                setupGuestView();
+            }
+
+            function setupGuestView() {
+                displayGameId.textContent = `ID: ${gameId} (Guest View)`;
                 loadRandomData();
             }
 
             function loadRealGameData(userUid) {
-                // This call might also fail if the 'apple' path or userUid is invalid
-                firebase.database().ref('apple').child(userUid).once('value', snapshot => {
+                const appleRef = firebase.database().ref('apple').child(userUid);
+                appleRef.once('value').then(snapshot => {
                     const data = snapshot.val() || {};
                     for (let i = 1; i <= 50; i++) {
-                        const el = document.getElementById(`img${i}`);
+                        const imgElement = document.getElementById(`img${i}`);
                         const status = data[`img${i}`]?.Status;
-                        el.src = status === 'Apple' ? 'appleof.png' : 'not_apple.png';
+                        if (status === 'Apple') {
+                            imgElement.src = 'appleof.png';
+                        } else if (status === 'Not Apple') {
+                            imgElement.src = 'not_apple.png';
+                        } else {
+                             // If status is unknown, default to one of the row images
+                             // This logic assumes row images are the defaults
+                             // We can keep the initial image src as a fallback or set a default here
+                             // For now, let's keep the initial image until data loads
+                        }
                     }
                     showRow(currentRow);
-                }).catch(() => {
-                     // If loading real data fails, load random data
-                     loadRandomData();
+                }).catch(err => {
+                    console.error("Error fetching game data:", err);
+                    // If loading fails, fall back to random data or default images
+                    loadRandomData();
                 });
             }
 
             function loadRandomData() {
                 for (let i = 1; i <= 50; i++) {
-                    const el = document.getElementById(`img${i}`);
-                    el.src = Math.random() > 0.5 ? 'appleof.png' : 'not_apple.png';
+                    const imgElement = document.getElementById(`img${i}`);
+                    const isApple = Math.random() > 0.5;
+                    imgElement.src = isApple ? 'appleof.png' : 'not_apple.png';
                 }
                 showRow(currentRow);
             }
+
+            // Show the first row initially
+            showRow(currentRow);
         });
     </script>
 </body>
