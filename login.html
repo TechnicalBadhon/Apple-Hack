@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Terminal</title>
+    <title>LDX404 - Login Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #ff4757;
-            --secondary-color: #00d4ff;
+            --primary-color: #00d4ff;
+            --secondary-color: #ff4757;
             --bg-dark: #0a0a0a;
-            --card-bg: rgba(13, 17, 23, 0.7);
+            --card-bg: #121212;
             --text-primary: #e6e6e6;
             --text-secondary: #a0a0a0;
             --error-color: #ff4757;
@@ -57,13 +57,13 @@
 
         .login-container {
             background: var(--card-bg);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 18px;
             padding: 40px;
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
             animation: fadeIn 1.2s ease-out;
             text-align: center;
         }
@@ -75,67 +75,70 @@
 
         .title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: var(--primary-color);
             margin-bottom: 10px;
-            text-shadow: 0 0 10px var(--primary-color);
-            animation: glitch-text 3s infinite;
-        }
-
-        @keyframes glitch-text {
-            0%, 100% { text-shadow: 0 0 10px var(--primary-color); }
-            25% { text-shadow: -2px 0 var(--secondary-color), 2px 0 var(--error-color); }
-            50% { text-shadow: 2px 0 var(--secondary-color), -2px 0 var(--error-color); }
-            75% { text-shadow: 0 0 10px var(--primary-color); }
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            letter-spacing: 1px;
         }
 
         .subtitle {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--text-secondary);
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            letter-spacing: 0.5px;
         }
 
         .input-group {
-            margin-bottom: 25px;
+            margin-bottom: 28px;
             text-align: left;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 18px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
             color: var(--text-primary);
             font-family: 'Fira Code', monospace;
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
             background: rgba(255, 255, 255, 0.08);
         }
 
         /* Platform Selection */
         .platform-group {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             text-align: left;
+        }
+
+        .platform-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
         }
 
         .platform-options {
             display: flex;
-            gap: 15px;
+            gap: 18px;
             margin-top: 8px;
         }
 
@@ -147,40 +150,40 @@
 
         .platform-btn {
             width: 100%;
-            padding: 12px 0;
+            padding: 14px 0;
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--secondary-color);
-            border-radius: 8px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
             color: var(--text-primary);
             font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .platform-btn.selected {
-            background: var(--secondary-color);
+            background: var(--primary-color);
             color: var(--bg-dark);
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
         }
 
         .platform-btn.selected::after {
             content: "✓";
             position: absolute;
-            top: 4px;
-            right: 8px;
+            top: 6px;
+            right: 12px;
             color: var(--bg-dark);
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .login-btn {
             width: 100%;
-            height: 50px;
+            height: 55px;
             background: transparent;
             border: 1px solid var(--primary-color);
-            border-radius: 8px;
+            border-radius: 12px;
             color: var(--primary-color);
             font-family: 'Orbitron', sans-serif;
             font-size: 16px;
@@ -188,15 +191,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
+            letter-spacing: 1.5px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
         }
 
         .login-btn:hover {
             background: var(--primary-color);
             color: var(--bg-dark);
-            box-shadow: 0 0 15px var(--primary-color);
-            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--primary-color);
+            transform: translateY(-3px);
         }
 
         .login-btn:disabled {
@@ -210,17 +214,22 @@
 
         .error-message {
             color: var(--error-color);
-            font-size: 0.9rem;
-            margin-top: 15px;
+            font-size: 0.95rem;
+            margin-top: 18px;
             display: none;
             animation: fadeIn 0.5s;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 71, 87, 0.1);
         }
 
         .loading-text {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--secondary-color);
+            margin-top: 20px;
+            font-size: 1rem;
+            color: var(--primary-color);
             display: none;
+            text-align: center;
         }
 
         .loading-text::after {
@@ -241,7 +250,7 @@
 
     <div class="main-container">
         <div class="login-container">
-            <h1 class="title">BLACK DOG APPLE</h1>
+            <h1 class="title">LDX404</h1>
             <p class="subtitle">SELECT PLATFORM & ENTER GAME ID</p>
             
             <form id="loginForm">
@@ -262,10 +271,10 @@
                     <input type="text" id="gameId" name="gameId" placeholder="Enter your player uid" required minlength="9">
                 </div>
                 
-                <button type="submit" class="login-btn" id="loginBtn">EXECUTE</button>
+                <button type="submit" class="login-btn" id="loginBtn">AUTHENTICATE</button>
                 
                 <div class="error-message" id="errorMessage">ACCESS DENIED: INVALID ID</div>
-                <div class="loading-text" id="loadingText">AUTHENTICATING</div>
+                <div class="loading-text" id="loadingText">VERIFYING CREDENTIALS</div>
             </form>
         </div>
     </div>
@@ -314,7 +323,7 @@
                 draw() {
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(255, 0, 64, 0.8)';
+                    ctx.fillStyle = 'rgba(0, 212, 255, 0.8)';
                     ctx.fill();
                 }
             }
@@ -338,7 +347,7 @@
                             ctx.moveTo(nodes[i].x, nodes[i].y);
                             ctx.lineTo(nodes[j].x, nodes[j].y);
                             const o = 1 - (d / connectionDistance);
-                            ctx.strokeStyle = `rgba(255, 0, 64, ${o * 0.5})`;
+                            ctx.strokeStyle = `rgba(0, 212, 255, ${o * 0.5})`;
                             ctx.lineWidth = 0.5;
                             ctx.stroke();
                         }
