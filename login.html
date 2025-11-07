@@ -168,23 +168,6 @@
         </form>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script>
-        const firebaseConfig = {
-          apiKey: "AIzaSyCPX39jxbL-mi6Lo4LmtPXMWn9dq1khX1w",
-          authDomain: "codify09.firebaseapp.com",
-          databaseURL: "https://codify09-default-rtdb.firebaseio.com",
-          projectId: "codify09",
-          storageBucket: "codify09.firebasestorage.app",
-          messagingSenderId: "457920758628",
-          appId: "1:457920758628:web:5f7ffed17caaf6f90cb071",
-          measurementId: "G-LG9RP4RV1E"
-        };
-        firebase.initializeApp(firebaseConfig);
-    </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Platform selection logic
@@ -197,7 +180,7 @@
                 });
             });
 
-            // Form submission logic
+            // Form submission logic (WITHOUT Firebase check)
             const loginForm = document.getElementById('loginForm');
             const gameIdInput = document.getElementById('gameId');
             const loginBtn = document.getElementById('loginBtn');
@@ -217,51 +200,12 @@
                 loadingText.style.display = 'block';
                 loginBtn.disabled = true;
 
-                // --- Firebase Check with Timeout ---
-                const db = firebase.database();
-                const timeoutPromise = new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Timeout')), 5000) // 5 second timeout
-                );
-
-                const firebasePromise = db.ref('UsersData_dev420').once('value');
-
-                Promise.race([firebasePromise, timeoutPromise])
-                    .then(snapshot => {
-                        // Check if the snapshot exists and has children
-                        if (snapshot.exists()) {
-                            let userFound = false;
-                            snapshot.forEach(child => {
-                                if (child.val().GameID === gameId) {
-                                    userFound = true;
-                                }
-                            });
-                            return userFound;
-                        } else {
-                            console.warn("UsersData_dev420 path does not exist in the database.");
-                            // If path doesn't exist, assume valid ID for now
-                            return true;
-                        }
-                    })
-                    .then(userFound => {
-                        if (userFound) {
-                            localStorage.setItem('gameId', gameId);
-                            localStorage.setItem('isLoggedIn', 'true');
-                            window.location.href = 'index.html';
-                        } else {
-                            showError("Access Denied: Invalid Game ID");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Firebase check failed:", error);
-                        // On error (including timeout), assume valid ID and proceed
-                        localStorage.setItem('gameId', gameId);
-                        localStorage.setItem('isLoggedIn', 'true');
-                        window.location.href = 'index.html';
-                    })
-                    .finally(() => {
-                        loadingText.style.display = 'none';
-                        loginBtn.disabled = false;
-                    });
+                // --- NO Firebase Check ---
+                // Save login state and ID
+                localStorage.setItem('gameId', gameId);
+                localStorage.setItem('isLoggedIn', 'true');
+                // Redirect to main game
+                window.location.href = 'index.html';
             });
 
             function showError(msg) {
