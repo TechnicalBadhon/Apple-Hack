@@ -252,7 +252,8 @@
         <button class="control-btn" id="nextBtn">Next<i class="material-icons">arrow_forward</i></button>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK is now only needed for the game data load if it's also broken -->
+    <!-- If game data load also fails, remove the SDK and loadRandomData() fallback will be used -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
@@ -292,6 +293,7 @@
             // Auth & Data Load
             const gameId = localStorage.getItem('gameId');
             if (!gameId) {
+                // Redirect to login if no game ID is found in localStorage
                 return window.location.href = 'login.html';
             }
 
@@ -299,6 +301,7 @@
             displayGameId.textContent = `ID: ${gameId}`;
 
             if (isLoggedIn) {
+                // This part might also fail if the UsersData_dev420 path is invalid
                 firebase.database().ref('UsersData_dev420').once('value').then(snapshot => {
                     let userUid = null;
                     snapshot.forEach(child => {
@@ -306,12 +309,16 @@
                     });
                     if (userUid) loadRealGameData(userUid);
                     else loadRandomData();
-                }).catch(() => loadRandomData());
+                }).catch(() => {
+                    // If the user lookup fails, load random data
+                    loadRandomData();
+                });
             } else {
                 loadRandomData();
             }
 
             function loadRealGameData(userUid) {
+                // This call might also fail if the 'apple' path or userUid is invalid
                 firebase.database().ref('apple').child(userUid).once('value', snapshot => {
                     const data = snapshot.val() || {};
                     for (let i = 1; i <= 50; i++) {
@@ -320,6 +327,9 @@
                         el.src = status === 'Apple' ? 'appleof.png' : 'not_apple.png';
                     }
                     showRow(currentRow);
+                }).catch(() => {
+                     // If loading real data fails, load random data
+                     loadRandomData();
                 });
             }
 
