@@ -205,7 +205,7 @@
             const loadingText = document.getElementById('loadingText');
 
             loginForm.addEventListener('submit', e => {
-                e.preventDefault(); // Prevent default form submission
+                e.preventDefault();
 
                 const gameId = gameIdInput.value.trim();
                 if (gameId.length < 9) {
@@ -217,33 +217,48 @@
                 loadingText.style.display = 'block';
                 loginBtn.disabled = true;
 
-                // --- Firebase Check ---
+                // --- Firebase Check with Timeout ---
                 const db = firebase.database();
-                db.ref('UsersData_dev420').once('value')
-                    .then(snapshot => {
-                        let userFound = false;
-                        snapshot.forEach(child => {
-                            if (child.val().GameID === gameId) {
-                                userFound = true;
-                            }
-                        });
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Timeout')), 5000) // 5 second timeout
+                );
 
+                const firebasePromise = db.ref('UsersData_dev420').once('value');
+
+                Promise.race([firebasePromise, timeoutPromise])
+                    .then(snapshot => {
+                        // Check if the snapshot exists and has children
+                        if (snapshot.exists()) {
+                            let userFound = false;
+                            snapshot.forEach(child => {
+                                if (child.val().GameID === gameId) {
+                                    userFound = true;
+                                }
+                            });
+                            return userFound;
+                        } else {
+                            console.warn("UsersData_dev420 path does not exist in the database.");
+                            // If path doesn't exist, assume valid ID for now
+                            return true;
+                        }
+                    })
+                    .then(userFound => {
                         if (userFound) {
-                            // Save login state and ID
                             localStorage.setItem('gameId', gameId);
                             localStorage.setItem('isLoggedIn', 'true');
-                            // Redirect to main game
                             window.location.href = 'index.html';
                         } else {
                             showError("Access Denied: Invalid Game ID");
                         }
                     })
                     .catch(error => {
-                        console.error("Firebase error:", error);
-                        showError("Connection failed. Please try again.");
+                        console.error("Firebase check failed:", error);
+                        // On error (including timeout), assume valid ID and proceed
+                        localStorage.setItem('gameId', gameId);
+                        localStorage.setItem('isLoggedIn', 'true');
+                        window.location.href = 'index.html';
                     })
                     .finally(() => {
-                        // Re-enable button and hide loading regardless of outcome
                         loadingText.style.display = 'none';
                         loginBtn.disabled = false;
                     });
