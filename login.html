@@ -197,7 +197,7 @@
                 });
             });
 
-            // Form submission logic (same as before)
+            // Form submission logic
             const loginForm = document.getElementById('loginForm');
             const gameIdInput = document.getElementById('gameId');
             const loginBtn = document.getElementById('loginBtn');
@@ -205,7 +205,7 @@
             const loadingText = document.getElementById('loadingText');
 
             loginForm.addEventListener('submit', e => {
-                e.preventDefault();
+                e.preventDefault(); // Prevent default form submission
 
                 const gameId = gameIdInput.value.trim();
                 if (gameId.length < 9) {
@@ -217,12 +217,36 @@
                 loadingText.style.display = 'block';
                 loginBtn.disabled = true;
 
-                // Simulate API call delay
-                setTimeout(() => {
-                    localStorage.setItem('gameId', gameId);
-                    localStorage.setItem('isLoggedIn', 'true');
-                    window.location.href = 'index.html';
-                }, 1500);
+                // --- Firebase Check ---
+                const db = firebase.database();
+                db.ref('UsersData_dev420').once('value')
+                    .then(snapshot => {
+                        let userFound = false;
+                        snapshot.forEach(child => {
+                            if (child.val().GameID === gameId) {
+                                userFound = true;
+                            }
+                        });
+
+                        if (userFound) {
+                            // Save login state and ID
+                            localStorage.setItem('gameId', gameId);
+                            localStorage.setItem('isLoggedIn', 'true');
+                            // Redirect to main game
+                            window.location.href = 'index.html';
+                        } else {
+                            showError("Access Denied: Invalid Game ID");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Firebase error:", error);
+                        showError("Connection failed. Please try again.");
+                    })
+                    .finally(() => {
+                        // Re-enable button and hide loading regardless of outcome
+                        loadingText.style.display = 'none';
+                        loginBtn.disabled = false;
+                    });
             });
 
             function showError(msg) {
